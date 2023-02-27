@@ -934,6 +934,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for Undo
 
+	// no validation rules for AmountC
+
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
 	}

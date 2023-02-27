@@ -58,7 +58,7 @@ type LocationRepo interface {
 	GetMyLocationLast(ctx context.Context, userId int64) (*Location, error)
 	GetMyStopLocationLast(ctx context.Context, userId int64) (*Location, error)
 	GetMyLocationRunningLast(ctx context.Context, userId int64) (*Location, error)
-	GetLocationsByUserId(ctx context.Context, userId int64) ([]*Location, error)
+	GetLocationsByUserId(ctx context.Context, userId int64) ([]*LocationNew, error)
 	GetRewardLocationByRowOrCol(ctx context.Context, row int64, col int64, locationRowConfig int64) ([]*Location, error)
 	GetRewardLocationByIds(ctx context.Context, ids ...int64) (map[int64]*Location, error)
 	GetLocationByIds(ctx context.Context, userIds ...int64) ([]*Location, error)
@@ -71,6 +71,8 @@ type LocationRepo interface {
 	LockGlobalWithdraw(ctx context.Context) (bool, error)
 	UnLockGlobalWithdraw(ctx context.Context) (bool, error)
 	GetLockGlobalLocation(ctx context.Context) (*GlobalLock, error)
+
+	GetMyStopLocationsLast(ctx context.Context, userId int64) ([]*LocationNew, error)
 }
 
 func NewRecordUseCase(

@@ -511,6 +511,8 @@ components:
                 undo:
                     type: integer
                     format: int64
+                AmountC:
+                    type: string
         UserInfoReply_List:
             type: object
             properties:

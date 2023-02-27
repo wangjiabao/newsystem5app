@@ -228,6 +228,7 @@ message UserInfoReply {
 	string recommendAreaTotal = 43;
 	string areaMaxAmount = 44;
 	int64 undo = 45;
+	string AmountC = 46;
 }
 
 message RewardListRequest {
