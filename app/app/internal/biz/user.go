@@ -393,59 +393,51 @@ func (uuc *UserUseCase) UpdateUserRecommend(ctx context.Context, u *User, req *v
 
 func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoReply, error) {
 	var (
-		myUser                 *User
-		userInfo               *UserInfo
-		locations              []*LocationNew
-		userBalance            *UserBalance
-		userRecommend          *UserRecommend
-		userRecommends         []*UserRecommend
-		userRewards            []*Reward
-		userRewardTotal        int64
-		encodeString           string
-		myUserRecommendUserId  int64
-		myRecommendUser        *User
-		rowNum                 int64
-		colNum                 int64
-		recommendTeamNum       int64
-		recommendTotal         int64
-		recommendVipTotal      int64
-		recommendAreaTotal     int64
-		feeDaily               int64
-		locationTotal          int64
-		locationTotalCol       int64
-		locationTotalRow       int64
-		myCode                 string
-		inviteUserAddress      string
-		amount                 = "0"
-		userCount              string
-		status                 = "no"
-		configs                []*Config
-		myLastStopLocations    []*LocationNew
-		myLastLocationCurrent  int64
-		myWithdraws            []*Withdraw
-		totalDepoist           int64
-		withdrawAmount         int64
-		topUsersReply          []*v1.UserInfoReply_List
-		locationCount          int64
-		poolAmount             int64
-		userTodayReward        int64
-		recommendTop           int64
-		fybPrice               int64
-		fybRate                string
-		areaAmount             int64
-		maxAreaAmount          int64
-		recommendAreaOne       int64
-		recommendAreaTwo       int64
-		recommendAreaThree     int64
-		recommendAreaFour      int64
-		recommendAreaOneName   string
-		recommendAreaTwoName   string
-		recommendAreaThreeName string
-		recommendAreaFourName  string
-		areaName               string
-		timeAgain              int64
-		stopCoin               int64
-		err                    error
+		myUser                   *User
+		userInfo                 *UserInfo
+		locations                []*LocationNew
+		userBalance              *UserBalance
+		userRecommend            *UserRecommend
+		userRecommends           []*UserRecommend
+		userRewards              []*Reward
+		userRewardTotal          int64
+		encodeString             string
+		myUserRecommendUserId    int64
+		myRecommendUser          *User
+		recommendTeamNum         int64
+		recommendTotal           int64
+		recommendTeamTotal       int64
+		locationDailyRewardTotal int64
+		recommendAreaTotal       int64
+		myCode                   string
+		inviteUserAddress        string
+		amount                   = "0"
+		userCount                string
+		status                   = "no"
+		configs                  []*Config
+		myLastStopLocations      []*LocationNew
+		myLastLocationCurrent    int64
+		myWithdraws              []*Withdraw
+		totalDepoist             int64
+		withdrawAmount           int64
+		locationCount            int64
+		userTodayReward          int64
+		recommendTop             int64
+		fybPrice                 int64
+		areaAmount               int64
+		maxAreaAmount            int64
+		recommendAreaOne         int64
+		recommendAreaTwo         int64
+		recommendAreaThree       int64
+		recommendAreaFour        int64
+		recommendAreaOneName     string
+		recommendAreaTwoName     string
+		recommendAreaThreeName   string
+		recommendAreaFourName    string
+		areaName                 string
+		timeAgain                int64
+		stopCoin                 int64
+		err                      error
 	)
 
 	// 配置
@@ -540,11 +532,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	if nil == userRecommend {
 		return nil, err
 	}
-
 	myCode = "D" + strconv.FormatInt(myUser.ID, 10)
 	codeByte := []byte(myCode)
 	encodeString = base64.StdEncoding.EncodeToString(codeByte)
-
 	if "" != userRecommend.RecommendCode {
 		tmpRecommendUserIds := strings.Split(userRecommend.RecommendCode, "D")
 		if 2 <= len(tmpRecommendUserIds) {
@@ -569,25 +559,14 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	if nil != userRewards {
 		for _, vUserReward := range userRewards {
 			userRewardTotal += vUserReward.Amount
-			if "recommend" == vUserReward.Reason {
-				recommendTotal += vUserReward.Amount
-			} else if "location" == vUserReward.Reason {
-				locationTotal += vUserReward.Amount
-				if "col" == vUserReward.LocationType {
-					locationTotalCol += vUserReward.Amount
-				} else if "row" == vUserReward.LocationType {
-					locationTotalRow += vUserReward.Amount
-				}
-			} else if "recommend_vip" == vUserReward.Reason {
-				recommendVipTotal += vUserReward.Amount
-			} else if "fee_daily" == vUserReward.Reason {
-				feeDaily += vUserReward.Amount
-			} else if "recommend_top" == vUserReward.Reason {
-				recommendTop += vUserReward.Amount
-			} else if "recommend_vip_top" == vUserReward.Reason {
-				recommendVipTotal += vUserReward.Amount
+			if "recommend_team" == vUserReward.Reason {
+				recommendTeamTotal += vUserReward.Amount
 			} else if "daily_recommend_area" == vUserReward.Reason {
 				recommendAreaTotal += vUserReward.Amount
+			} else if "location_daily_reward" == vUserReward.Reason {
+				locationDailyRewardTotal += vUserReward.Amount
+			} else if "recommend" == vUserReward.Reason {
+				recommendTotal += vUserReward.Amount
 			}
 		}
 	}
@@ -674,11 +653,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 	return &v1.UserInfoReply{
 		Address:             myUser.Address,
-		Level:               userInfo.Vip,
 		Status:              status,
 		Amount:              amount,
-		RecommendVipTotal:   fmt.Sprintf("%.4f", float64(recommendVipTotal)/float64(10000000000)),
-		FeeDaily:            fmt.Sprintf("%.4f", float64(feeDaily)/float64(10000000000)),
 		BalanceUsdt:         fmt.Sprintf("%.4f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
 		BalanceDhb:          fmt.Sprintf("%.4f", float64(userBalance.BalanceDhb)/float64(10000000000)),
 		InviteUrl:           encodeString,
@@ -687,25 +663,17 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		RecommendTeamNum:    recommendTeamNum,
 		Total:               fmt.Sprintf("%.4f", float64(userRewardTotal)/float64(10000000000)),
 		WithdrawAmount:      fmt.Sprintf("%.3f", float64(withdrawAmount)/float64(10000000000)),
-		Row:                 rowNum,
-		Col:                 colNum,
 		RecommendTotal:      fmt.Sprintf("%.4f", float64(recommendTotal)/float64(10000000000)),
-		LocationTotal:       fmt.Sprintf("%.4f", float64(locationTotal)/float64(10000000000)),
 		Usdt:                "0x55d398326f99059fF775485246999027B3197955",
 		Account:             "0x6b2c086C9bDb2e09A85f84CD1b8eed1d9C9B7eae",
 		AmountB:             fmt.Sprintf("%.4f", float64(myLastLocationCurrent)/float64(10000000000)),
 		AmountC:             fmt.Sprintf("%.4f", float64(stopCoin)/float64(10000000000)),
 		UserCount:           userCount,
 		TotalDeposit:        fmt.Sprintf("%.4f", float64(totalDepoist)/float64(10000000000)),
-		PoolAmount:          fmt.Sprintf("%.4f", float64(poolAmount)/float64(10000000000)),
-		TopUser:             topUsersReply,
 		LocationCount:       locationCount,
 		TodayReward:         fmt.Sprintf("%.4f", float64(userTodayReward)/float64(10000000000)),
 		RecommendTop:        fmt.Sprintf("%.4f", float64(recommendTop)/float64(10000000000)),
-		LocationTotalCol:    fmt.Sprintf("%.4f", float64(locationTotalCol)/float64(10000000000)),
-		LocationTotalRow:    fmt.Sprintf("%.4f", float64(locationTotalRow)/float64(10000000000)),
 		FybPrice:            fmt.Sprintf("%.4f", float64(fybPrice)/float64(1000)),
-		FybRate:             fybRate,
 		Undo:                myUser.Undo,
 		AreaName:            areaName,
 		AreaAmount:          fmt.Sprintf("%.4f", float64(areaAmount)/float64(100000)),
@@ -716,109 +684,27 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 }
 
 func (uuc *UserUseCase) RewardList(ctx context.Context, req *v1.RewardListRequest, user *User) (*v1.RewardListReply, error) {
-	var (
-		userRewards    []*Reward
-		locationIdsMap map[int64]int64
-		locations      map[int64]*Location
-		err            error
-	)
+
 	res := &v1.RewardListReply{
 		Rewards: make([]*v1.RewardListReply_List, 0),
-	}
-
-	userRewards, err = uuc.ubRepo.GetUserRewardByUserId(ctx, user.ID)
-	if nil != err {
-		return res, nil
-	}
-
-	locationIdsMap = make(map[int64]int64, 0)
-	if nil != userRewards {
-		for _, vUserReward := range userRewards {
-			if "location" == vUserReward.Reason && req.Type == vUserReward.LocationType && 1 <= vUserReward.ReasonLocationId {
-				locationIdsMap[vUserReward.ReasonLocationId] = vUserReward.ReasonLocationId
-			}
-		}
-
-		var tmpLocationIds []int64
-		for _, v := range locationIdsMap {
-			tmpLocationIds = append(tmpLocationIds, v)
-		}
-		if 0 >= len(tmpLocationIds) {
-			return res, nil
-		}
-
-		locations, err = uuc.locationRepo.GetRewardLocationByIds(ctx, tmpLocationIds...)
-
-		for _, vUserReward := range userRewards {
-			if "location" == vUserReward.Reason && req.Type == vUserReward.LocationType {
-				if _, ok := locations[vUserReward.ReasonLocationId]; !ok {
-					continue
-				}
-
-				res.Rewards = append(res.Rewards, &v1.RewardListReply_List{
-					CreatedAt:      vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:         fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
-					LocationStatus: locations[vUserReward.ReasonLocationId].Status,
-					Type:           vUserReward.Type,
-				})
-			}
-		}
 	}
 
 	return res, nil
 }
 
 func (uuc *UserUseCase) RecommendRewardList(ctx context.Context, user *User) (*v1.RecommendRewardListReply, error) {
-	var (
-		userRewards []*Reward
-		err         error
-	)
+
 	res := &v1.RecommendRewardListReply{
 		Rewards: make([]*v1.RecommendRewardListReply_List, 0),
-	}
-
-	userRewards, err = uuc.ubRepo.GetUserRewardByUserId(ctx, user.ID)
-	if nil != err {
-		return res, nil
-	}
-
-	for _, vUserReward := range userRewards {
-		if "recommend" == vUserReward.Reason || "recommend_vip" == vUserReward.Reason {
-			res.Rewards = append(res.Rewards, &v1.RecommendRewardListReply_List{
-				CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-				Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
-				Type:      vUserReward.Type,
-				Reason:    vUserReward.Reason,
-			})
-		}
 	}
 
 	return res, nil
 }
 
 func (uuc *UserUseCase) FeeRewardList(ctx context.Context, user *User) (*v1.FeeRewardListReply, error) {
-	var (
-		userRewards []*Reward
-		err         error
-	)
 	res := &v1.FeeRewardListReply{
 		Rewards: make([]*v1.FeeRewardListReply_List, 0),
 	}
-
-	userRewards, err = uuc.ubRepo.GetUserRewardByUserId(ctx, user.ID)
-	if nil != err {
-		return res, nil
-	}
-
-	for _, vUserReward := range userRewards {
-		if "fee" == vUserReward.Reason {
-			res.Rewards = append(res.Rewards, &v1.FeeRewardListReply_List{
-				CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-				Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
-			})
-		}
-	}
-
 	return res, nil
 }
 
