@@ -102,6 +102,30 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/app_server/delete_balance_reward:
+        post:
+            tags:
+                - App
+            operationId: App_DeleteBalanceReward
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/DeleteBalanceRewardRequest_SendBody'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteBalanceRewardReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/app_server/eth_authorize:
         post:
             tags:
@@ -232,6 +256,30 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/app_server/set_balance_reward:
+        post:
+            tags:
+                - App
+            operationId: App_SetBalanceReward
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/SetBalanceRewardRequest_SendBody'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SetBalanceRewardReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/app_server/user_info:
         get:
             tags:
@@ -308,6 +356,16 @@ components:
         AdminWithdrawReply:
             type: object
             properties: {}
+        DeleteBalanceRewardReply:
+            type: object
+            properties:
+                status:
+                    type: string
+        DeleteBalanceRewardRequest_SendBody:
+            type: object
+            properties:
+                amount:
+                    type: string
         DepositReply:
             type: object
             properties: {}
@@ -404,6 +462,16 @@ components:
                 locationStatus:
                     type: string
                 type:
+                    type: string
+        SetBalanceRewardReply:
+            type: object
+            properties:
+                status:
+                    type: string
+        SetBalanceRewardRequest_SendBody:
+            type: object
+            properties:
+                amount:
                     type: string
         Status:
             type: object
@@ -512,6 +580,10 @@ components:
                     type: integer
                     format: int64
                 AmountC:
+                    type: string
+                AmountBalanceReward:
+                    type: string
+                areaName:
                     type: string
         UserInfoReply_List:
             type: object

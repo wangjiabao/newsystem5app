@@ -14,4 +14,4 @@ data:
     read_timeout: 0.2s
     write_timeout: 0.2s
 auth:
-  jwt_key: 7d25c9b8d23acb6bc6565270495ed7a0 # md5 dhbmachine
+  jwt_key: 5485c6f09a1a9bf5edeb841d85e09250 # md5 dhbmachine

@@ -936,6 +936,10 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for AmountC
 
+	// no validation rules for AmountBalanceReward
+
+	// no validation rules for AreaName
+
 	if len(errors) > 0 {
 		return UserInfoReplyMultiError(errors)
 	}
@@ -2438,6 +2442,476 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = WithdrawReplyValidationError{}
+
+// Validate checks the field values on SetBalanceRewardRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetBalanceRewardRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetBalanceRewardRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetBalanceRewardRequestMultiError, or nil if none found.
+func (m *SetBalanceRewardRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetBalanceRewardRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSendBody()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetBalanceRewardRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetBalanceRewardRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSendBody()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetBalanceRewardRequestValidationError{
+				field:  "SendBody",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SetBalanceRewardRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetBalanceRewardRequestMultiError is an error wrapping multiple validation
+// errors returned by SetBalanceRewardRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SetBalanceRewardRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetBalanceRewardRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetBalanceRewardRequestMultiError) AllErrors() []error { return m }
+
+// SetBalanceRewardRequestValidationError is the validation error returned by
+// SetBalanceRewardRequest.Validate if the designated constraints aren't met.
+type SetBalanceRewardRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetBalanceRewardRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetBalanceRewardRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetBalanceRewardRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetBalanceRewardRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetBalanceRewardRequestValidationError) ErrorName() string {
+	return "SetBalanceRewardRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetBalanceRewardRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetBalanceRewardRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetBalanceRewardRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetBalanceRewardRequestValidationError{}
+
+// Validate checks the field values on SetBalanceRewardReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SetBalanceRewardReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetBalanceRewardReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SetBalanceRewardReplyMultiError, or nil if none found.
+func (m *SetBalanceRewardReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetBalanceRewardReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return SetBalanceRewardReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetBalanceRewardReplyMultiError is an error wrapping multiple validation
+// errors returned by SetBalanceRewardReply.ValidateAll() if the designated
+// constraints aren't met.
+type SetBalanceRewardReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetBalanceRewardReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetBalanceRewardReplyMultiError) AllErrors() []error { return m }
+
+// SetBalanceRewardReplyValidationError is the validation error returned by
+// SetBalanceRewardReply.Validate if the designated constraints aren't met.
+type SetBalanceRewardReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetBalanceRewardReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetBalanceRewardReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetBalanceRewardReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetBalanceRewardReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetBalanceRewardReplyValidationError) ErrorName() string {
+	return "SetBalanceRewardReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetBalanceRewardReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetBalanceRewardReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetBalanceRewardReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetBalanceRewardReplyValidationError{}
+
+// Validate checks the field values on DeleteBalanceRewardRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteBalanceRewardRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteBalanceRewardRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteBalanceRewardRequestMultiError, or nil if none found.
+func (m *DeleteBalanceRewardRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteBalanceRewardRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSendBody()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DeleteBalanceRewardRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DeleteBalanceRewardRequestValidationError{
+					field:  "SendBody",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSendBody()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DeleteBalanceRewardRequestValidationError{
+				field:  "SendBody",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DeleteBalanceRewardRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteBalanceRewardRequestMultiError is an error wrapping multiple
+// validation errors returned by DeleteBalanceRewardRequest.ValidateAll() if
+// the designated constraints aren't met.
+type DeleteBalanceRewardRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteBalanceRewardRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteBalanceRewardRequestMultiError) AllErrors() []error { return m }
+
+// DeleteBalanceRewardRequestValidationError is the validation error returned
+// by DeleteBalanceRewardRequest.Validate if the designated constraints aren't met.
+type DeleteBalanceRewardRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteBalanceRewardRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteBalanceRewardRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteBalanceRewardRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteBalanceRewardRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteBalanceRewardRequestValidationError) ErrorName() string {
+	return "DeleteBalanceRewardRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteBalanceRewardRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteBalanceRewardRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteBalanceRewardRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteBalanceRewardRequestValidationError{}
+
+// Validate checks the field values on DeleteBalanceRewardReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteBalanceRewardReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteBalanceRewardReply with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteBalanceRewardReplyMultiError, or nil if none found.
+func (m *DeleteBalanceRewardReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteBalanceRewardReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Status
+
+	if len(errors) > 0 {
+		return DeleteBalanceRewardReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteBalanceRewardReplyMultiError is an error wrapping multiple validation
+// errors returned by DeleteBalanceRewardReply.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteBalanceRewardReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteBalanceRewardReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteBalanceRewardReplyMultiError) AllErrors() []error { return m }
+
+// DeleteBalanceRewardReplyValidationError is the validation error returned by
+// DeleteBalanceRewardReply.Validate if the designated constraints aren't met.
+type DeleteBalanceRewardReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteBalanceRewardReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteBalanceRewardReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteBalanceRewardReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteBalanceRewardReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteBalanceRewardReplyValidationError) ErrorName() string {
+	return "DeleteBalanceRewardReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteBalanceRewardReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteBalanceRewardReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteBalanceRewardReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteBalanceRewardReplyValidationError{}
 
 // Validate checks the field values on AdminRewardListRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -6168,6 +6642,220 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = WithdrawRequest_SendBodyValidationError{}
+
+// Validate checks the field values on SetBalanceRewardRequest_SendBody with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *SetBalanceRewardRequest_SendBody) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SetBalanceRewardRequest_SendBody with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// SetBalanceRewardRequest_SendBodyMultiError, or nil if none found.
+func (m *SetBalanceRewardRequest_SendBody) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SetBalanceRewardRequest_SendBody) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Amount
+
+	if len(errors) > 0 {
+		return SetBalanceRewardRequest_SendBodyMultiError(errors)
+	}
+
+	return nil
+}
+
+// SetBalanceRewardRequest_SendBodyMultiError is an error wrapping multiple
+// validation errors returned by
+// SetBalanceRewardRequest_SendBody.ValidateAll() if the designated
+// constraints aren't met.
+type SetBalanceRewardRequest_SendBodyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SetBalanceRewardRequest_SendBodyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SetBalanceRewardRequest_SendBodyMultiError) AllErrors() []error { return m }
+
+// SetBalanceRewardRequest_SendBodyValidationError is the validation error
+// returned by SetBalanceRewardRequest_SendBody.Validate if the designated
+// constraints aren't met.
+type SetBalanceRewardRequest_SendBodyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SetBalanceRewardRequest_SendBodyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SetBalanceRewardRequest_SendBodyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SetBalanceRewardRequest_SendBodyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SetBalanceRewardRequest_SendBodyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SetBalanceRewardRequest_SendBodyValidationError) ErrorName() string {
+	return "SetBalanceRewardRequest_SendBodyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SetBalanceRewardRequest_SendBodyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSetBalanceRewardRequest_SendBody.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SetBalanceRewardRequest_SendBodyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SetBalanceRewardRequest_SendBodyValidationError{}
+
+// Validate checks the field values on DeleteBalanceRewardRequest_SendBody with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *DeleteBalanceRewardRequest_SendBody) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteBalanceRewardRequest_SendBody
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// DeleteBalanceRewardRequest_SendBodyMultiError, or nil if none found.
+func (m *DeleteBalanceRewardRequest_SendBody) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteBalanceRewardRequest_SendBody) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Amount
+
+	if len(errors) > 0 {
+		return DeleteBalanceRewardRequest_SendBodyMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteBalanceRewardRequest_SendBodyMultiError is an error wrapping multiple
+// validation errors returned by
+// DeleteBalanceRewardRequest_SendBody.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteBalanceRewardRequest_SendBodyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteBalanceRewardRequest_SendBodyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteBalanceRewardRequest_SendBodyMultiError) AllErrors() []error { return m }
+
+// DeleteBalanceRewardRequest_SendBodyValidationError is the validation error
+// returned by DeleteBalanceRewardRequest_SendBody.Validate if the designated
+// constraints aren't met.
+type DeleteBalanceRewardRequest_SendBodyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) ErrorName() string {
+	return "DeleteBalanceRewardRequest_SendBodyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteBalanceRewardRequest_SendBodyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteBalanceRewardRequest_SendBody.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteBalanceRewardRequest_SendBodyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteBalanceRewardRequest_SendBodyValidationError{}
 
 // Validate checks the field values on AdminRewardListReply_List with the rules
 // defined in the proto definition for this message. If any rules are

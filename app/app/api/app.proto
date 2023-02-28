@@ -68,6 +68,20 @@ service App {
 		};
 	};
 
+	rpc SetBalanceReward(SetBalanceRewardRequest) returns (SetBalanceRewardReply) {
+		option (google.api.http) = {
+			post: "/api/app_server/set_balance_reward"
+			body: "send_body"
+		};
+	};
+
+	rpc DeleteBalanceReward(DeleteBalanceRewardRequest) returns (DeleteBalanceRewardReply) {
+		option (google.api.http) = {
+			post: "/api/app_server/delete_balance_reward"
+			body: "send_body"
+		};
+	};
+
 	rpc Deposit (DepositRequest) returns (DepositReply) {
 		option (google.api.http) = {
 			get: "/api/admin_dhb/deposit"
@@ -229,6 +243,8 @@ message UserInfoReply {
 	string areaMaxAmount = 44;
 	int64 undo = 45;
 	string AmountC = 46;
+	string AmountBalanceReward = 47;
+	string areaName = 48;
 }
 
 message RewardListRequest {
@@ -305,6 +321,30 @@ message WithdrawRequest {
 }
 
 message WithdrawReply {
+	string status = 1;
+}
+
+message SetBalanceRewardRequest {
+	message SendBody{
+		string amount = 1;
+	}
+
+	SendBody send_body = 1;
+}
+
+message SetBalanceRewardReply {
+	string status = 1;
+}
+
+message DeleteBalanceRewardRequest {
+	message SendBody{
+		string amount = 1;
+	}
+
+	SendBody send_body = 1;
+}
+
+message DeleteBalanceRewardReply {
 	string status = 1;
 }
 

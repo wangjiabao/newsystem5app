@@ -36,6 +36,16 @@ type UserRecommend struct {
 	UpdatedAt     time.Time `gorm:"type:datetime;not null"`
 }
 
+type BalanceReward struct {
+	ID        int64     `gorm:"primarykey;type:int"`
+	UserId    int64     `gorm:"type:int;not null"`
+	Amount    int64     `gorm:"type:bigint;not null"`
+	Status    int64     `gorm:"type:int;not null"`
+	SetDate   time.Time `gorm:"type:datetime;not null"`
+	CreatedAt time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+}
+
 type UserRecommendArea struct {
 	ID            int64     `gorm:"primarykey;type:int"`
 	RecommendCode string    `gorm:"type:varchar(10000);not null"`
@@ -690,6 +700,27 @@ func (ur *UserRecommendRepo) GetUserRecommendLowArea(ctx context.Context, code s
 	return res, nil
 }
 
+// GetUserArea .
+func (ur *UserRecommendRepo) GetUserArea(ctx context.Context, userId int64) (*biz.UserArea, error) {
+
+	var userArea *UserArea
+	if err := ur.data.db.Where("user_id=?", userId).Table("user_area").First(&userArea).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New(500, "USER AREA NOT FOUND", err.Error())
+		}
+
+		return nil, errors.New(500, "USER AREA ERROR", err.Error())
+	}
+
+	return &biz.UserArea{
+		ID:         userArea.ID,
+		UserId:     userArea.UserId,
+		Amount:     userArea.Amount,
+		SelfAmount: userArea.SelfAmount,
+		Level:      userArea.Level,
+	}, nil
+}
+
 // GetUserAreas .
 func (ur *UserRecommendRepo) GetUserAreas(ctx context.Context, userIds []int64) ([]*biz.UserArea, error) {
 
@@ -1014,6 +1045,44 @@ func (ub *UserBalanceRepo) WithdrawUsdt(ctx context.Context, userId int64, amoun
 	return nil
 }
 
+// SetBalanceReward .
+func (ub *UserBalanceRepo) SetBalanceReward(ctx context.Context, userId int64, amount int64) error {
+	var err error
+	if res := ub.data.DB(ctx).Table("user_balance").
+		Where("user_id=? and balance_usdt>=?", userId, amount).
+		Updates(map[string]interface{}{"balance_usdt": gorm.Expr("balance_usdt - ?", amount)}); 0 == res.RowsAffected || nil != res.Error {
+		return errors.NotFound("user balance err", "user balance error")
+	}
+
+	var balanceReward BalanceReward
+	balanceReward.Amount = amount
+	balanceReward.UserId = userId
+	balanceReward.SetDate = time.Now().UTC()
+	balanceReward.Status = 1
+	err = ub.data.DB(ctx).Table("balance_reward").Create(&balanceReward).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UpdateBalanceReward .
+func (ub *UserBalanceRepo) UpdateBalanceReward(ctx context.Context, userId int64, id int64, amount int64, status int64) error {
+	if res := ub.data.DB(ctx).Table("user_balance").
+		Where("user_id=?", userId).
+		Updates(map[string]interface{}{"balance_usdt": gorm.Expr("balance_usdt + ?", amount)}); 0 == res.RowsAffected || nil != res.Error {
+		return errors.NotFound("user balance err", "user balance error")
+	}
+
+	if res := ub.data.DB(ctx).Table("balance_reward").
+		Where("id=? and status=?", id, 1).
+		Updates(map[string]interface{}{"amount": gorm.Expr("amount - ?", amount), "status": status}); 0 == res.RowsAffected || nil != res.Error {
+		return errors.NotFound("user balance err", "user balance error")
+	}
+
+	return nil
+}
+
 // WithdrawDhb .
 func (ub *UserBalanceRepo) WithdrawDhb(ctx context.Context, userId int64, amount int64) error {
 	var err error
@@ -1109,6 +1178,30 @@ func (ub *UserBalanceRepo) GetWithdrawByUserId(ctx context.Context, userId int64
 			Status:          withdraw.Status,
 			Type:            withdraw.Type,
 			CreatedAt:       withdraw.CreatedAt,
+		})
+	}
+	return res, nil
+}
+
+// GetBalanceRewardByUserId .
+func (ub *UserBalanceRepo) GetBalanceRewardByUserId(ctx context.Context, userId int64) ([]*biz.BalanceReward, error) {
+	var balanceRewards []*BalanceReward
+	res := make([]*biz.BalanceReward, 0)
+	if err := ub.data.db.Where("user_id=?", userId).Where("status=?", 1).Order("id asc").Table("balance_reward").Find(&balanceRewards).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return res, errors.NotFound("WITHDRAW_NOT_FOUND", "withdraw not found")
+		}
+
+		return nil, errors.New(500, "WITHDRAW ERROR", err.Error())
+	}
+
+	for _, balanceReward := range balanceRewards {
+		res = append(res, &biz.BalanceReward{
+			ID:      balanceReward.ID,
+			UserId:  balanceReward.UserId,
+			Status:  balanceReward.Status,
+			Amount:  balanceReward.Amount,
+			SetDate: balanceReward.SetDate,
 		})
 	}
 	return res, nil

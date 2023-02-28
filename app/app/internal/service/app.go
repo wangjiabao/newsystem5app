@@ -187,6 +187,40 @@ func (a *AppService) Withdraw(ctx context.Context, req *v1.WithdrawRequest) (*v1
 	})
 }
 
+// SetBalanceReward .
+func (a *AppService) SetBalanceReward(ctx context.Context, req *v1.SetBalanceRewardRequest) (*v1.SetBalanceRewardReply, error) {
+	// 在上下文 context 中取出 claims 对象
+	var userId int64
+	if claims, ok := jwt.FromContext(ctx); ok {
+		c := claims.(jwt2.MapClaims)
+		if c["UserId"] == nil {
+			return nil, errors.New(500, "ERROR_TOKEN", "无效TOKEN")
+		}
+		userId = int64(c["UserId"].(float64))
+	}
+
+	return a.uuc.SetBalanceReward(ctx, req, &biz.User{
+		ID: userId,
+	})
+}
+
+// DeleteBalanceReward .
+func (a *AppService) DeleteBalanceReward(ctx context.Context, req *v1.DeleteBalanceRewardRequest) (*v1.DeleteBalanceRewardReply, error) {
+	// 在上下文 context 中取出 claims 对象
+	var userId int64
+	if claims, ok := jwt.FromContext(ctx); ok {
+		c := claims.(jwt2.MapClaims)
+		if c["UserId"] == nil {
+			return nil, errors.New(500, "ERROR_TOKEN", "无效TOKEN")
+		}
+		userId = int64(c["UserId"].(float64))
+	}
+
+	return a.uuc.DeleteBalanceReward(ctx, req, &biz.User{
+		ID: userId,
+	})
+}
+
 func (a *AppService) AdminRewardList(ctx context.Context, req *v1.AdminRewardListRequest) (*v1.AdminRewardListReply, error) {
 	return a.uuc.AdminRewardList(ctx, req)
 }

@@ -31,6 +31,8 @@ type AppClient interface {
 	WithdrawList(ctx context.Context, in *WithdrawListRequest, opts ...grpc.CallOption) (*WithdrawListReply, error)
 	RecommendList(ctx context.Context, in *RecommendListRequest, opts ...grpc.CallOption) (*RecommendListReply, error)
 	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...grpc.CallOption) (*WithdrawReply, error)
+	SetBalanceReward(ctx context.Context, in *SetBalanceRewardRequest, opts ...grpc.CallOption) (*SetBalanceRewardReply, error)
+	DeleteBalanceReward(ctx context.Context, in *DeleteBalanceRewardRequest, opts ...grpc.CallOption) (*DeleteBalanceRewardReply, error)
 	Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositReply, error)
 	//
 	//	rpc AdminRewardList (AdminRewardListRequest) returns (AdminRewardListReply) {
@@ -151,6 +153,24 @@ func (c *appClient) Withdraw(ctx context.Context, in *WithdrawRequest, opts ...g
 	return out, nil
 }
 
+func (c *appClient) SetBalanceReward(ctx context.Context, in *SetBalanceRewardRequest, opts ...grpc.CallOption) (*SetBalanceRewardReply, error) {
+	out := new(SetBalanceRewardReply)
+	err := c.cc.Invoke(ctx, "/api.App/SetBalanceReward", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *appClient) DeleteBalanceReward(ctx context.Context, in *DeleteBalanceRewardRequest, opts ...grpc.CallOption) (*DeleteBalanceRewardReply, error) {
+	out := new(DeleteBalanceRewardReply)
+	err := c.cc.Invoke(ctx, "/api.App/DeleteBalanceReward", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *appClient) Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositReply, error) {
 	out := new(DepositReply)
 	err := c.cc.Invoke(ctx, "/api.App/Deposit", in, out, opts...)
@@ -200,6 +220,8 @@ type AppServer interface {
 	WithdrawList(context.Context, *WithdrawListRequest) (*WithdrawListReply, error)
 	RecommendList(context.Context, *RecommendListRequest) (*RecommendListReply, error)
 	Withdraw(context.Context, *WithdrawRequest) (*WithdrawReply, error)
+	SetBalanceReward(context.Context, *SetBalanceRewardRequest) (*SetBalanceRewardReply, error)
+	DeleteBalanceReward(context.Context, *DeleteBalanceRewardRequest) (*DeleteBalanceRewardReply, error)
 	Deposit(context.Context, *DepositRequest) (*DepositReply, error)
 	//
 	//	rpc AdminRewardList (AdminRewardListRequest) returns (AdminRewardListReply) {
@@ -262,6 +284,12 @@ func (UnimplementedAppServer) RecommendList(context.Context, *RecommendListReque
 }
 func (UnimplementedAppServer) Withdraw(context.Context, *WithdrawRequest) (*WithdrawReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
+}
+func (UnimplementedAppServer) SetBalanceReward(context.Context, *SetBalanceRewardRequest) (*SetBalanceRewardReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetBalanceReward not implemented")
+}
+func (UnimplementedAppServer) DeleteBalanceReward(context.Context, *DeleteBalanceRewardRequest) (*DeleteBalanceRewardReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBalanceReward not implemented")
 }
 func (UnimplementedAppServer) Deposit(context.Context, *DepositRequest) (*DepositReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
@@ -450,6 +478,42 @@ func _App_Withdraw_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _App_SetBalanceReward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetBalanceRewardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).SetBalanceReward(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.App/SetBalanceReward",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).SetBalanceReward(ctx, req.(*SetBalanceRewardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _App_DeleteBalanceReward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBalanceRewardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppServer).DeleteBalanceReward(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.App/DeleteBalanceReward",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppServer).DeleteBalanceReward(ctx, req.(*DeleteBalanceRewardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _App_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DepositRequest)
 	if err := dec(in); err != nil {
@@ -564,6 +628,14 @@ var App_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Withdraw",
 			Handler:    _App_Withdraw_Handler,
+		},
+		{
+			MethodName: "SetBalanceReward",
+			Handler:    _App_SetBalanceReward_Handler,
+		},
+		{
+			MethodName: "DeleteBalanceReward",
+			Handler:    _App_DeleteBalanceReward_Handler,
 		},
 		{
 			MethodName: "Deposit",

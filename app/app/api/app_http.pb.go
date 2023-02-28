@@ -22,6 +22,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationAppAdminFee = "/api.App/AdminFee"
 const OperationAppAdminWithdraw = "/api.App/AdminWithdraw"
 const OperationAppAdminWithdrawEth = "/api.App/AdminWithdrawEth"
+const OperationAppDeleteBalanceReward = "/api.App/DeleteBalanceReward"
 const OperationAppDeposit = "/api.App/Deposit"
 const OperationAppEthAuthorize = "/api.App/EthAuthorize"
 const OperationAppFeeRewardList = "/api.App/FeeRewardList"
@@ -29,6 +30,7 @@ const OperationAppRecommendList = "/api.App/RecommendList"
 const OperationAppRecommendRewardList = "/api.App/RecommendRewardList"
 const OperationAppRecommendUpdate = "/api.App/RecommendUpdate"
 const OperationAppRewardList = "/api.App/RewardList"
+const OperationAppSetBalanceReward = "/api.App/SetBalanceReward"
 const OperationAppUserInfo = "/api.App/UserInfo"
 const OperationAppWithdraw = "/api.App/Withdraw"
 const OperationAppWithdrawList = "/api.App/WithdrawList"
@@ -37,6 +39,7 @@ type AppHTTPServer interface {
 	AdminFee(context.Context, *AdminFeeRequest) (*AdminFeeReply, error)
 	AdminWithdraw(context.Context, *AdminWithdrawRequest) (*AdminWithdrawReply, error)
 	AdminWithdrawEth(context.Context, *AdminWithdrawEthRequest) (*AdminWithdrawEthReply, error)
+	DeleteBalanceReward(context.Context, *DeleteBalanceRewardRequest) (*DeleteBalanceRewardReply, error)
 	Deposit(context.Context, *DepositRequest) (*DepositReply, error)
 	EthAuthorize(context.Context, *EthAuthorizeRequest) (*EthAuthorizeReply, error)
 	FeeRewardList(context.Context, *FeeRewardListRequest) (*FeeRewardListReply, error)
@@ -44,6 +47,7 @@ type AppHTTPServer interface {
 	RecommendRewardList(context.Context, *RecommendRewardListRequest) (*RecommendRewardListReply, error)
 	RecommendUpdate(context.Context, *RecommendUpdateRequest) (*RecommendUpdateReply, error)
 	RewardList(context.Context, *RewardListRequest) (*RewardListReply, error)
+	SetBalanceReward(context.Context, *SetBalanceRewardRequest) (*SetBalanceRewardReply, error)
 	UserInfo(context.Context, *UserInfoRequest) (*UserInfoReply, error)
 	Withdraw(context.Context, *WithdrawRequest) (*WithdrawReply, error)
 	WithdrawList(context.Context, *WithdrawListRequest) (*WithdrawListReply, error)
@@ -60,6 +64,8 @@ func RegisterAppHTTPServer(s *http.Server, srv AppHTTPServer) {
 	r.GET("/api/app_server/withdraw_list", _App_WithdrawList0_HTTP_Handler(srv))
 	r.GET("/api/app_server/recommend_list", _App_RecommendList0_HTTP_Handler(srv))
 	r.POST("/api/app_server/withdraw", _App_Withdraw0_HTTP_Handler(srv))
+	r.POST("/api/app_server/set_balance_reward", _App_SetBalanceReward0_HTTP_Handler(srv))
+	r.POST("/api/app_server/delete_balance_reward", _App_DeleteBalanceReward0_HTTP_Handler(srv))
 	r.GET("/api/admin_dhb/deposit", _App_Deposit0_HTTP_Handler(srv))
 	r.GET("/api/admin_dhb/withdraw", _App_AdminWithdraw0_HTTP_Handler(srv))
 	r.GET("/api/admin_dhb/withdraw_eth", _App_AdminWithdrawEth0_HTTP_Handler(srv))
@@ -246,6 +252,50 @@ func _App_Withdraw0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error
 	}
 }
 
+func _App_SetBalanceReward0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in SetBalanceRewardRequest
+		if err := ctx.Bind(&in.SendBody); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppSetBalanceReward)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SetBalanceReward(ctx, req.(*SetBalanceRewardRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SetBalanceRewardReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _App_DeleteBalanceReward0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in DeleteBalanceRewardRequest
+		if err := ctx.Bind(&in.SendBody); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppDeleteBalanceReward)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.DeleteBalanceReward(ctx, req.(*DeleteBalanceRewardRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*DeleteBalanceRewardReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 func _App_Deposit0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in DepositRequest
@@ -326,6 +376,7 @@ type AppHTTPClient interface {
 	AdminFee(ctx context.Context, req *AdminFeeRequest, opts ...http.CallOption) (rsp *AdminFeeReply, err error)
 	AdminWithdraw(ctx context.Context, req *AdminWithdrawRequest, opts ...http.CallOption) (rsp *AdminWithdrawReply, err error)
 	AdminWithdrawEth(ctx context.Context, req *AdminWithdrawEthRequest, opts ...http.CallOption) (rsp *AdminWithdrawEthReply, err error)
+	DeleteBalanceReward(ctx context.Context, req *DeleteBalanceRewardRequest, opts ...http.CallOption) (rsp *DeleteBalanceRewardReply, err error)
 	Deposit(ctx context.Context, req *DepositRequest, opts ...http.CallOption) (rsp *DepositReply, err error)
 	EthAuthorize(ctx context.Context, req *EthAuthorizeRequest, opts ...http.CallOption) (rsp *EthAuthorizeReply, err error)
 	FeeRewardList(ctx context.Context, req *FeeRewardListRequest, opts ...http.CallOption) (rsp *FeeRewardListReply, err error)
@@ -333,6 +384,7 @@ type AppHTTPClient interface {
 	RecommendRewardList(ctx context.Context, req *RecommendRewardListRequest, opts ...http.CallOption) (rsp *RecommendRewardListReply, err error)
 	RecommendUpdate(ctx context.Context, req *RecommendUpdateRequest, opts ...http.CallOption) (rsp *RecommendUpdateReply, err error)
 	RewardList(ctx context.Context, req *RewardListRequest, opts ...http.CallOption) (rsp *RewardListReply, err error)
+	SetBalanceReward(ctx context.Context, req *SetBalanceRewardRequest, opts ...http.CallOption) (rsp *SetBalanceRewardReply, err error)
 	UserInfo(ctx context.Context, req *UserInfoRequest, opts ...http.CallOption) (rsp *UserInfoReply, err error)
 	Withdraw(ctx context.Context, req *WithdrawRequest, opts ...http.CallOption) (rsp *WithdrawReply, err error)
 	WithdrawList(ctx context.Context, req *WithdrawListRequest, opts ...http.CallOption) (rsp *WithdrawListReply, err error)
@@ -379,6 +431,19 @@ func (c *AppHTTPClientImpl) AdminWithdrawEth(ctx context.Context, in *AdminWithd
 	opts = append(opts, http.Operation(OperationAppAdminWithdrawEth))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AppHTTPClientImpl) DeleteBalanceReward(ctx context.Context, in *DeleteBalanceRewardRequest, opts ...http.CallOption) (*DeleteBalanceRewardReply, error) {
+	var out DeleteBalanceRewardReply
+	pattern := "/api/app_server/delete_balance_reward"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAppDeleteBalanceReward))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in.SendBody, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -470,6 +535,19 @@ func (c *AppHTTPClientImpl) RewardList(ctx context.Context, in *RewardListReques
 	opts = append(opts, http.Operation(OperationAppRewardList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *AppHTTPClientImpl) SetBalanceReward(ctx context.Context, in *SetBalanceRewardRequest, opts ...http.CallOption) (*SetBalanceRewardReply, error) {
+	var out SetBalanceRewardReply
+	pattern := "/api/app_server/set_balance_reward"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAppSetBalanceReward))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in.SendBody, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
