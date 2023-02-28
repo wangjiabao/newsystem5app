@@ -692,7 +692,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		RecommendTotal:      fmt.Sprintf("%.4f", float64(recommendTotal)/float64(10000000000)),
 		LocationTotal:       fmt.Sprintf("%.4f", float64(locationTotal)/float64(10000000000)),
 		Usdt:                "0x55d398326f99059fF775485246999027B3197955",
-		Account:             "0x5e30db5983170028d09ed5d7cfb25aa6495334c8",
+		Account:             "0x6b2c086C9bDb2e09A85f84CD1b8eed1d9C9B7eae",
 		AmountB:             fmt.Sprintf("%.4f", float64(myLastLocationCurrent)/float64(10000000000)),
 		AmountC:             fmt.Sprintf("%.4f", float64(stopCoin)/float64(10000000000)),
 		UserCount:           userCount,
