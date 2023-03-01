@@ -436,6 +436,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		areaName                 string
 		timeAgain                int64
 		stopCoin                 int64
+		totalAreaAmount          int64
 		myLocations              []*v1.UserInfoReply_List
 		err                      error
 	)
@@ -657,18 +658,15 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		if 0 < len(myRecommendUserIds) {
 			userAreas, err = uuc.urRepo.GetUserAreas(ctx, myRecommendUserIds)
 			if nil == err {
-				var (
-					tmpTotalAreaAmount int64
-				)
 				for _, vUserAreas := range userAreas {
 					tmpAreaAmount := vUserAreas.Amount + vUserAreas.SelfAmount
-					tmpTotalAreaAmount += tmpAreaAmount
+					totalAreaAmount += tmpAreaAmount
 					if tmpAreaAmount > maxAreaAmount {
 						maxAreaAmount = tmpAreaAmount
 					}
 				}
 
-				areaAmount = tmpTotalAreaAmount - maxAreaAmount
+				areaAmount = totalAreaAmount - maxAreaAmount
 			}
 
 			// 比较级别
@@ -748,6 +746,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		AreaName:                          areaName,
 		AreaAmount:                        fmt.Sprintf("%.4f", float64(areaAmount)/float64(100000)),
 		AreaMaxAmount:                     fmt.Sprintf("%.4f", float64(maxAreaAmount)/float64(100000)),
+		TotalAreaAmount:                   fmt.Sprintf("%.4f", float64(totalAreaAmount)/float64(100000)),
 		AmountBalanceReward:               fmt.Sprintf("%.4f", float64(totalBalanceRewardAmount)/float64(10000000000)),
 		LocationList:                      myLocations,
 		RecommendAreaList:                 recommendAreaList,

@@ -910,6 +910,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for YesterdayRecommendTotal
 
+	// no validation rules for TotalAreaAmount
+
 	for idx, item := range m.GetLocationList() {
 		_, _ = idx, item
 

@@ -242,6 +242,7 @@ message UserInfoReply {
 	string yesterdayDailyBalanceRewardTotal = 60;
 	string yesterdayRecommendAreaTotal = 61;
 	string yesterdayRecommendTotal = 62;
+	string totalAreaAmount = 63;
 
 	repeated List LocationList = 52;
 	message List {
