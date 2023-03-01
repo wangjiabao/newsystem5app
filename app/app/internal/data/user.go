@@ -41,6 +41,8 @@ type BalanceReward struct {
 	UserId    int64     `gorm:"type:int;not null"`
 	Amount    int64     `gorm:"type:bigint;not null"`
 	Status    int64     `gorm:"type:int;not null"`
+	H         int64     `gorm:"type:int;not null"`
+	M         int64     `gorm:"type:int;not null"`
 	SetDate   time.Time `gorm:"type:datetime;not null"`
 	CreatedAt time.Time `gorm:"type:datetime;not null"`
 	UpdatedAt time.Time `gorm:"type:datetime;not null"`
@@ -1054,11 +1056,14 @@ func (ub *UserBalanceRepo) SetBalanceReward(ctx context.Context, userId int64, a
 		return errors.NotFound("user balance err", "user balance error")
 	}
 
+	now := time.Now().UTC()
 	var balanceReward BalanceReward
 	balanceReward.Amount = amount
 	balanceReward.UserId = userId
-	balanceReward.SetDate = time.Now().UTC()
+	balanceReward.SetDate = now
 	balanceReward.Status = 1
+	balanceReward.H = int64(now.Hour())
+	balanceReward.M = int64(now.Minute())
 	err = ub.data.DB(ctx).Table("balance_reward").Create(&balanceReward).Error
 	if err != nil {
 		return err
