@@ -746,7 +746,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		AreaName:                          areaName,
 		AreaAmount:                        fmt.Sprintf("%.4f", float64(areaAmount)/float64(100000)),
 		AreaMaxAmount:                     fmt.Sprintf("%.4f", float64(maxAreaAmount)/float64(100000)),
-		TotalAreaAmount:                   fmt.Sprintf("%.4f", float64(totalAreaAmount)/float64(100000)),
+		TotalAreaAmount:                   fmt.Sprintf("%.4f", float64(myUserArea.Amount)/float64(100000)),
 		AmountBalanceReward:               fmt.Sprintf("%.4f", float64(totalBalanceRewardAmount)/float64(10000000000)),
 		LocationList:                      myLocations,
 		RecommendAreaList:                 recommendAreaList,
