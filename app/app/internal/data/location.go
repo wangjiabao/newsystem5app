@@ -216,7 +216,7 @@ func (lr *LocationRepo) GetMyLocationRunningLast(ctx context.Context, userId int
 func (lr *LocationRepo) GetLocationsByUserId(ctx context.Context, userId int64) ([]*biz.LocationNew, error) {
 	var locations []*LocationNew
 	res := make([]*biz.LocationNew, 0)
-	if err := lr.data.db.Table("location").
+	if err := lr.data.db.Table("location_new").
 		Where("user_id=?", userId).
 		Order("id desc").Find(&locations).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -233,6 +233,8 @@ func (lr *LocationRepo) GetLocationsByUserId(ctx context.Context, userId int64) 
 			Status:     location.Status,
 			Current:    location.Current,
 			CurrentMax: location.CurrentMax,
+			CreatedAt:  location.CreatedAt,
+			OutRate:    location.OutRate,
 		})
 	}
 

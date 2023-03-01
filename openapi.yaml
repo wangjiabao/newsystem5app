@@ -517,12 +517,6 @@ components:
                     format: int64
                 total:
                     type: string
-                row:
-                    type: integer
-                    format: int64
-                col:
-                    type: integer
-                    format: int64
                 recommendTotal:
                     type: string
                 locationTotal:
@@ -531,12 +525,6 @@ components:
                     type: string
                 account:
                     type: string
-                recommendNumAll:
-                    type: integer
-                    format: int64
-                recommendTeamAll:
-                    type: integer
-                    format: int64
                 amountB:
                     type: string
                 recommendVipTotal:
@@ -551,20 +539,12 @@ components:
                     type: string
                 poolAmount:
                     type: string
-                topUser:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/UserInfoReply_List'
                 locationCount:
                     type: integer
                     format: int64
                 todayReward:
                     type: string
                 recommendTop:
-                    type: string
-                locationTotalCol:
-                    type: string
-                locationTotalRow:
                     type: string
                 fybPrice:
                     type: string
@@ -585,14 +565,89 @@ components:
                     type: string
                 areaName:
                     type: string
+                recommendTeamTotal:
+                    type: string
+                locationDailyRewardTotal:
+                    type: string
+                dailyBalanceRewardTotal:
+                    type: string
+                yesterdayRecommendTeamTotal:
+                    type: string
+                yesterdayLocationDailyRewardTotal:
+                    type: string
+                yesterdayDailyBalanceRewardTotal:
+                    type: string
+                yesterdayRecommendAreaTotal:
+                    type: string
+                yesterdayRecommendTotal:
+                    type: string
+                LocationList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List'
+                recommendTeamList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List2'
+                recommendAreaList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List3'
+                locationDailyRewardList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List4'
+                recommendList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List5'
+                dailyBalanceRewardList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List6'
         UserInfoReply_List:
             type: object
             properties:
-                account:
+                createdAt:
                     type: string
-                recommendReward:
+                amount:
                     type: string
-                reward:
+                locationStatus:
+                    type: string
+        UserInfoReply_List2:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
+                    type: string
+        UserInfoReply_List3:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
+                    type: string
+        UserInfoReply_List4:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
+                    type: string
+        UserInfoReply_List5:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
+                    type: string
+        UserInfoReply_List6:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
                     type: string
         WithdrawListReply:
             type: object
