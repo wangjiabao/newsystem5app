@@ -912,6 +912,8 @@ func (m *UserInfoReply) validate(all bool) error {
 
 	// no validation rules for TotalAreaAmount
 
+	// no validation rules for LocationRunningAmount
+
 	for idx, item := range m.GetLocationList() {
 		_, _ = idx, item
 

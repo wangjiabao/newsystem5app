@@ -583,6 +583,8 @@ components:
                     type: string
                 totalAreaAmount:
                     type: string
+                locationRunningAmount:
+                    type: string
                 LocationList:
                     type: array
                     items:

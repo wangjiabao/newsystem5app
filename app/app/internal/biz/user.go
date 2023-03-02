@@ -436,6 +436,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		areaName                 string
 		timeAgain                int64
 		stopCoin                 int64
+		locationRunningAmount    int64
 		totalAreaAmount          int64
 		myLocations              []*v1.UserInfoReply_List
 		err                      error
@@ -489,7 +490,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			if "running" == v.Status {
 				status = "yes"
 				tmpCurrent += v.Current
-
+				locationRunningAmount += v.CurrentMax / v.OutRate
 			}
 
 			myLocations = append(myLocations, &v1.UserInfoReply_List{
@@ -724,6 +725,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		Amount:                            amount,
 		BalanceUsdt:                       fmt.Sprintf("%.2f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
 		BalanceDhb:                        fmt.Sprintf("%.2f", float64(userBalance.BalanceDhb)/float64(10000000000)),
+		LocationRunningAmount:             fmt.Sprintf("%.2f", float64(locationRunningAmount)/float64(10000000000)),
 		InviteUrl:                         encodeString,
 		InviteUserAddress:                 inviteUserAddress,
 		RecommendNum:                      userInfo.HistoryRecommend,
