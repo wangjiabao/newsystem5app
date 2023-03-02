@@ -37,15 +37,16 @@ type UserRecommend struct {
 }
 
 type BalanceReward struct {
-	ID        int64     `gorm:"primarykey;type:int"`
-	UserId    int64     `gorm:"type:int;not null"`
-	Amount    int64     `gorm:"type:bigint;not null"`
-	Status    int64     `gorm:"type:int;not null"`
-	H         int64     `gorm:"type:int;not null"`
-	M         int64     `gorm:"type:int;not null"`
-	SetDate   time.Time `gorm:"type:datetime;not null"`
-	CreatedAt time.Time `gorm:"type:datetime;not null"`
-	UpdatedAt time.Time `gorm:"type:datetime;not null"`
+	ID             int64     `gorm:"primarykey;type:int"`
+	UserId         int64     `gorm:"type:int;not null"`
+	Amount         int64     `gorm:"type:bigint;not null"`
+	Status         int64     `gorm:"type:int;not null"`
+	H              int64     `gorm:"type:int;not null"`
+	M              int64     `gorm:"type:int;not null"`
+	SetDate        time.Time `gorm:"type:datetime;not null"`
+	LastRewardDate time.Time `gorm:"type:datetime;not null"`
+	CreatedAt      time.Time `gorm:"type:datetime;not null"`
+	UpdatedAt      time.Time `gorm:"type:datetime;not null"`
 }
 
 type UserRecommendArea struct {
@@ -1062,6 +1063,7 @@ func (ub *UserBalanceRepo) SetBalanceReward(ctx context.Context, userId int64, a
 	balanceReward.UserId = userId
 	balanceReward.SetDate = now
 	balanceReward.Status = 1
+	balanceReward.LastRewardDate = now
 	balanceReward.H = int64(now.Hour())
 	balanceReward.M = int64(now.Minute())
 	err = ub.data.DB(ctx).Table("balance_reward").Create(&balanceReward).Error
