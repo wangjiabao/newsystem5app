@@ -678,13 +678,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		}
 
 		if 0 < len(myRecommendUserIds) {
-			myRecommendUsersMap, _ = uuc.repo.GetUserByUserIds(ctx, myRecommendUserIds...)
-			if nil != myRecommendUsersMap {
-				for _, vMyRecommendUsersMap := range myRecommendUsersMap {
-					myRecommendUserAddresses = append(myRecommendUserAddresses, &v1.UserInfoReply_List8{Address: vMyRecommendUsersMap.Address})
-				}
-			}
-
+			var (
+				userLocationRecommendUserIds []int64
+			)
 			userAreas, err = uuc.urRepo.GetUserAreas(ctx, myRecommendUserIds)
 			if nil == err {
 				for _, vUserAreas := range userAreas {
@@ -693,9 +689,20 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 					if tmpAreaAmount > maxAreaAmount {
 						maxAreaAmount = tmpAreaAmount
 					}
+
+					if vUserAreas.SelfAmount > 0 {
+						userLocationRecommendUserIds = append(userLocationRecommendUserIds, vUserAreas.UserId)
+					}
 				}
 
 				areaAmount = totalAreaAmount - maxAreaAmount
+			}
+
+			myRecommendUsersMap, _ = uuc.repo.GetUserByUserIds(ctx, userLocationRecommendUserIds...)
+			if nil != myRecommendUsersMap {
+				for _, vMyRecommendUsersMap := range myRecommendUsersMap {
+					myRecommendUserAddresses = append(myRecommendUserAddresses, &v1.UserInfoReply_List8{Address: vMyRecommendUsersMap.Address})
+				}
 			}
 
 			// 比较级别
