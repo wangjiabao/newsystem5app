@@ -439,6 +439,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		locationRunningAmount    int64
 		totalAreaAmount          int64
 		myLocations              []*v1.UserInfoReply_List
+		myRecommendUserAddresses []*v1.UserInfoReply_List8
 		err                      error
 	)
 
@@ -486,11 +487,15 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	if nil != locations && 0 < len(locations) {
 		status = "stop"
 		tmpCurrent := int64(0)
+		tmpCurrentMaxSubCurrent := int64(0)
 		for _, v := range locations {
 			if "running" == v.Status {
 				status = "yes"
 				tmpCurrent += v.Current
 				locationRunningAmount += v.CurrentMax / v.OutRate
+				if v.CurrentMax >= v.Current {
+					tmpCurrentMaxSubCurrent += v.CurrentMax - v.Current
+				}
 			}
 
 			myLocations = append(myLocations, &v1.UserInfoReply_List{
@@ -502,7 +507,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 		if tmpCurrent > 0 {
 			status = "running"
-			amount = fmt.Sprintf("%.2f", float64(tmpCurrent)/float64(10000000000))
+			amount = fmt.Sprintf("%.2f", float64(tmpCurrentMaxSubCurrent)/float64(10000000000))
 		}
 	}
 	locationCount = int64(len(locations))
@@ -556,9 +561,23 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	}
 
 	// 团队
+	var (
+		teamUserIds       []int64
+		teamUsers         map[int64]*User
+		teamUserAddresses []*v1.UserInfoReply_List7
+	)
 	userRecommends, err = uuc.urRepo.GetUserRecommendLikeCode(ctx, myCode)
 	if nil != userRecommends {
+		for _, vUserRecommends := range userRecommends {
+			teamUserIds = append(teamUserIds, vUserRecommends.UserId)
+		}
 		recommendTeamNum = int64(len(userRecommends))
+		teamUsers, _ = uuc.repo.GetUserByUserIds(ctx, teamUserIds...)
+		if nil != teamUsers {
+			for _, vTeamUsers := range teamUsers {
+				teamUserAddresses = append(teamUserAddresses, &v1.UserInfoReply_List7{Address: vTeamUsers.Address})
+			}
+		}
 	}
 
 	// 累计奖励
@@ -645,9 +664,10 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	// 小区信息
 	if "" != myCode {
 		var (
-			myRecommendUsers   []*UserRecommend
-			userAreas          []*UserArea
-			myRecommendUserIds []int64
+			myRecommendUsers    []*UserRecommend
+			userAreas           []*UserArea
+			myRecommendUserIds  []int64
+			myRecommendUsersMap map[int64]*User
 		)
 		myRecommendUsers, err = uuc.urRepo.GetUserRecommendByCode(ctx, myCode)
 		if nil == err {
@@ -658,6 +678,13 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		}
 
 		if 0 < len(myRecommendUserIds) {
+			myRecommendUsersMap, _ = uuc.repo.GetUserByUserIds(ctx, myRecommendUserIds...)
+			if nil != myRecommendUsersMap {
+				for _, vMyRecommendUsersMap := range myRecommendUsersMap {
+					myRecommendUserAddresses = append(myRecommendUserAddresses, &v1.UserInfoReply_List8{Address: vMyRecommendUsersMap.Address})
+				}
+			}
+
 			userAreas, err = uuc.urRepo.GetUserAreas(ctx, myRecommendUserIds)
 			if nil == err {
 				for _, vUserAreas := range userAreas {
@@ -762,6 +789,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		YesterdayDailyBalanceRewardTotal:  fmt.Sprintf("%.2f", float64(yesterdayDailyBalanceRewardTotal)/float64(10000000000)),
 		YesterdayLocationDailyRewardTotal: fmt.Sprintf("%.2f", float64(yesterdayLocationDailyRewardTotal)/float64(10000000000)),
 		YesterdayRecommendTotal:           fmt.Sprintf("%.2f", float64(yesterdayRecommendTotal)/float64(10000000000)),
+		TeamAddressList:                   teamUserAddresses,
+		MyRecommendAddressList:            myRecommendUserAddresses,
 	}, nil
 }
 

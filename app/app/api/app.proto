@@ -282,6 +282,16 @@ message UserInfoReply {
 		string created_at = 1;
 		string amount = 2;
 	}
+
+	repeated List7 teamAddressList = 65;
+	message List7 {
+		string address = 1;
+	}
+
+	repeated List8 myRecommendAddressList = 66;
+	message List8 {
+		string address = 1;
+	}
 }
 
 message RewardListRequest {

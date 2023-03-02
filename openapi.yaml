@@ -609,6 +609,14 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/UserInfoReply_List6'
+                teamAddressList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List7'
+                myRecommendAddressList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List8'
         UserInfoReply_List:
             type: object
             properties:
@@ -655,6 +663,16 @@ components:
                 createdAt:
                     type: string
                 amount:
+                    type: string
+        UserInfoReply_List7:
+            type: object
+            properties:
+                address:
+                    type: string
+        UserInfoReply_List8:
+            type: object
+            properties:
+                address:
                     type: string
         WithdrawListReply:
             type: object
