@@ -250,6 +250,8 @@ message UserInfoReply {
 		string created_at = 1;
 		string amount = 2;
 		string locationStatus = 3;
+		string amountMax = 4;
+		int64 outRate = 5;
 	}
 
 	repeated List2 recommendTeamList = 53;
@@ -286,11 +288,18 @@ message UserInfoReply {
 	repeated List7 teamAddressList = 65;
 	message List7 {
 		string address = 1;
+		string Amount = 2;
 	}
 
 	repeated List8 myRecommendAddressList = 66;
 	message List8 {
 		string address = 1;
+	}
+
+	repeated List9 allRewardList = 67;
+	message List9 {
+		string created_at = 1;
+		string amount = 2;
 	}
 }
 

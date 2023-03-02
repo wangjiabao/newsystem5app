@@ -617,6 +617,10 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/UserInfoReply_List8'
+                allRewardList:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/UserInfoReply_List9'
         UserInfoReply_List:
             type: object
             properties:
@@ -626,6 +630,11 @@ components:
                     type: string
                 locationStatus:
                     type: string
+                amountMax:
+                    type: string
+                outRate:
+                    type: integer
+                    format: int64
         UserInfoReply_List2:
             type: object
             properties:
@@ -669,10 +678,19 @@ components:
             properties:
                 address:
                     type: string
+                Amount:
+                    type: string
         UserInfoReply_List8:
             type: object
             properties:
                 address:
+                    type: string
+        UserInfoReply_List9:
+            type: object
+            properties:
+                createdAt:
+                    type: string
+                amount:
                     type: string
         WithdrawListReply:
             type: object

@@ -167,7 +167,7 @@ func (a *AppService) WithdrawList(ctx context.Context, req *v1.WithdrawListReque
 
 	return a.uuc.WithdrawList(ctx, &biz.User{
 		ID: userId,
-	})
+	}, req.Type)
 }
 
 // Withdraw withdraw.

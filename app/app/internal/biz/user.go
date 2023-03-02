@@ -170,7 +170,7 @@ type UserBalanceRepo interface {
 	GreateWithdraw(ctx context.Context, userId int64, amount int64, coinType string) (*Withdraw, error)
 	WithdrawUsdt(ctx context.Context, userId int64, amount int64) error
 	WithdrawDhb(ctx context.Context, userId int64, amount int64) error
-	GetWithdrawByUserId(ctx context.Context, userId int64) ([]*Withdraw, error)
+	GetWithdrawByUserId(ctx context.Context, userId int64, typeCoin string) ([]*Withdraw, error)
 	GetWithdraws(ctx context.Context, b *Pagination, userId int64) ([]*Withdraw, error, int64)
 	GetWithdrawPassOrRewarded(ctx context.Context) ([]*Withdraw, error)
 	UpdateWithdraw(ctx context.Context, id int64, status string) (*Withdraw, error)
@@ -440,6 +440,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		totalAreaAmount          int64
 		myLocations              []*v1.UserInfoReply_List
 		myRecommendUserAddresses []*v1.UserInfoReply_List8
+		allRewardList            []*v1.UserInfoReply_List9
 		err                      error
 	)
 
@@ -502,6 +503,8 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				CreatedAt:      v.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
 				Amount:         fmt.Sprintf("%.2f", float64(v.CurrentMax)/float64(v.OutRate)/float64(10000000000)),
 				LocationStatus: v.Status,
+				AmountMax:      fmt.Sprintf("%.2f", float64(v.CurrentMax)/float64(10000000000)),
+				OutRate:        v.OutRate,
 			})
 		}
 
@@ -513,7 +516,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	locationCount = int64(len(locations))
 
 	// 提现记录
-	myWithdraws, err = uuc.ubRepo.GetWithdrawByUserId(ctx, myUser.ID)
+	myWithdraws, err = uuc.ubRepo.GetWithdrawByUserId(ctx, myUser.ID, "usdt")
 	for _, vMyWithdraw := range myWithdraws {
 		withdrawAmount += vMyWithdraw.RelAmount
 	}
@@ -565,17 +568,35 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		teamUserIds       []int64
 		teamUsers         map[int64]*User
 		teamUserAddresses []*v1.UserInfoReply_List7
+		userAreasTeam     []*UserArea
 	)
+	userAreasMap := make(map[int64]int64, 0)
 	userRecommends, err = uuc.urRepo.GetUserRecommendLikeCode(ctx, myCode)
 	if nil != userRecommends {
 		for _, vUserRecommends := range userRecommends {
 			teamUserIds = append(teamUserIds, vUserRecommends.UserId)
 		}
+		// 区信息
+		userAreasTeam, err = uuc.urRepo.GetUserAreas(ctx, teamUserIds)
+		if nil == err {
+			for _, vUserAreas := range userAreasTeam {
+				userAreasMap[vUserAreas.UserId] = vUserAreas.Amount
+			}
+		}
+
+		// 用户信息
 		recommendTeamNum = int64(len(userRecommends))
 		teamUsers, _ = uuc.repo.GetUserByUserIds(ctx, teamUserIds...)
 		if nil != teamUsers {
 			for _, vTeamUsers := range teamUsers {
-				teamUserAddresses = append(teamUserAddresses, &v1.UserInfoReply_List7{Address: vTeamUsers.Address})
+				var tmpAmount int64
+				if _, ok := userAreasMap[vTeamUsers.ID]; ok {
+					tmpAmount = userAreasMap[vTeamUsers.ID]
+				}
+				teamUserAddresses = append(teamUserAddresses, &v1.UserInfoReply_List7{
+					Address: vTeamUsers.Address,
+					Amount:  fmt.Sprintf("%.2f", float64(tmpAmount)/float64(100000)),
+				})
 			}
 		}
 	}
@@ -610,6 +631,11 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	if nil != userRewards {
 		for _, vUserReward := range userRewards {
 			userRewardTotal += vUserReward.Amount
+			allRewardList = append(allRewardList, &v1.UserInfoReply_List9{
+				CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
+				Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
+			})
+
 			if "recommend_team" == vUserReward.Reason {
 				recommendTeamTotal += vUserReward.Amount
 				if vUserReward.CreatedAt.Before(yesterdayEnd) && vUserReward.CreatedAt.After(yesterdayStart) {
@@ -797,6 +823,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		YesterdayLocationDailyRewardTotal: fmt.Sprintf("%.2f", float64(yesterdayLocationDailyRewardTotal)/float64(10000000000)),
 		YesterdayRecommendTotal:           fmt.Sprintf("%.2f", float64(yesterdayRecommendTotal)/float64(10000000000)),
 		TeamAddressList:                   teamUserAddresses,
+		AllRewardList:                     allRewardList,
 		MyRecommendAddressList:            myRecommendUserAddresses,
 	}, nil
 }
@@ -826,10 +853,11 @@ func (uuc *UserUseCase) FeeRewardList(ctx context.Context, user *User) (*v1.FeeR
 	return res, nil
 }
 
-func (uuc *UserUseCase) WithdrawList(ctx context.Context, user *User) (*v1.WithdrawListReply, error) {
+func (uuc *UserUseCase) WithdrawList(ctx context.Context, user *User, reqTypeCoin string) (*v1.WithdrawListReply, error) {
 
 	var (
 		withdraws []*Withdraw
+		typeCoin  = "usdt"
 		err       error
 	)
 
@@ -837,7 +865,11 @@ func (uuc *UserUseCase) WithdrawList(ctx context.Context, user *User) (*v1.Withd
 		Withdraw: make([]*v1.WithdrawListReply_List, 0),
 	}
 
-	withdraws, err = uuc.ubRepo.GetWithdrawByUserId(ctx, user.ID)
+	if "" != reqTypeCoin {
+		typeCoin = reqTypeCoin
+	}
+
+	withdraws, err = uuc.ubRepo.GetWithdrawByUserId(ctx, user.ID, typeCoin)
 	if nil != err {
 		return res, err
 	}

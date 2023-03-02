@@ -1164,10 +1164,10 @@ func (ub *UserBalanceRepo) UpdateWithdraw(ctx context.Context, id int64, status 
 }
 
 // GetWithdrawByUserId .
-func (ub *UserBalanceRepo) GetWithdrawByUserId(ctx context.Context, userId int64) ([]*biz.Withdraw, error) {
+func (ub *UserBalanceRepo) GetWithdrawByUserId(ctx context.Context, userId int64, typeCoin string) ([]*biz.Withdraw, error) {
 	var withdraws []*Withdraw
 	res := make([]*biz.Withdraw, 0)
-	if err := ub.data.db.Where("user_id=?", userId).Table("withdraw").Find(&withdraws).Error; err != nil {
+	if err := ub.data.db.Where("user_id=?", userId).Where("type=?", typeCoin).Table("withdraw").Find(&withdraws).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return res, errors.NotFound("WITHDRAW_NOT_FOUND", "withdraw not found")
 		}
