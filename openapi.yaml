@@ -623,6 +623,9 @@ components:
                     type: string
                 amount:
                     type: string
+                recommendNum:
+                    type: integer
+                    format: int64
         UserInfoReply_List3:
             type: object
             properties:

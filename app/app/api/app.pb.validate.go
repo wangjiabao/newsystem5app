@@ -6196,6 +6196,8 @@ func (m *UserInfoReply_List2) validate(all bool) error {
 
 	// no validation rules for Amount
 
+	// no validation rules for RecommendNum
+
 	if len(errors) > 0 {
 		return UserInfoReply_List2MultiError(errors)
 	}

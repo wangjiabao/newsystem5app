@@ -494,14 +494,14 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 			myLocations = append(myLocations, &v1.UserInfoReply_List{
 				CreatedAt:      v.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-				Amount:         fmt.Sprintf("%.4f", float64(v.CurrentMax)/float64(v.OutRate)/float64(10000000000)),
+				Amount:         fmt.Sprintf("%.2f", float64(v.CurrentMax)/float64(v.OutRate)/float64(10000000000)),
 				LocationStatus: v.Status,
 			})
 		}
 
 		if tmpCurrent > 0 {
 			status = "running"
-			amount = fmt.Sprintf("%.4f", float64(tmpCurrent)/float64(10000000000))
+			amount = fmt.Sprintf("%.2f", float64(tmpCurrent)/float64(10000000000))
 		}
 	}
 	locationCount = int64(len(locations))
@@ -596,8 +596,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 					yesterdayRecommendTeamTotal += vUserReward.Amount
 				}
 				recommendTeamList = append(recommendTeamList, &v1.UserInfoReply_List2{
-					CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:    fmt.Sprintf("%.4f", float64(vUserReward.Amount)/float64(10000000000)),
+					CreatedAt:    vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
+					RecommendNum: vUserReward.ReasonLocationId,
+					Amount:       fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				})
 
 			} else if "daily_recommend_area" == vUserReward.Reason {
@@ -607,7 +608,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				}
 				recommendAreaList = append(recommendAreaList, &v1.UserInfoReply_List3{
 					CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:    fmt.Sprintf("%.4f", float64(vUserReward.Amount)/float64(10000000000)),
+					Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				})
 			} else if "location_daily_reward" == vUserReward.Reason {
 				locationDailyRewardTotal += vUserReward.Amount
@@ -616,7 +617,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				}
 				locationDailyRewardList = append(locationDailyRewardList, &v1.UserInfoReply_List4{
 					CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:    fmt.Sprintf("%.4f", float64(vUserReward.Amount)/float64(10000000000)),
+					Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				})
 			} else if "recommend" == vUserReward.Reason {
 				recommendTotal += vUserReward.Amount
@@ -625,13 +626,13 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				}
 				recommendList = append(recommendList, &v1.UserInfoReply_List5{
 					CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:    fmt.Sprintf("%.4f", float64(vUserReward.Amount)/float64(10000000000)),
+					Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				})
 			} else if "daily_balance_reward" == vUserReward.Reason {
 				dailyBalanceRewardTotal += vUserReward.Amount
 				dailyBalanceRewardList = append(dailyBalanceRewardList, &v1.UserInfoReply_List6{
 					CreatedAt: vUserReward.CreatedAt.Add(8 * time.Hour).Format("2006-01-02 15:04:05"),
-					Amount:    fmt.Sprintf("%.4f", float64(vUserReward.Amount)/float64(10000000000)),
+					Amount:    fmt.Sprintf("%.2f", float64(vUserReward.Amount)/float64(10000000000)),
 				})
 				if vUserReward.CreatedAt.Before(yesterdayEnd) && vUserReward.CreatedAt.After(yesterdayStart) {
 					yesterdayDailyBalanceRewardTotal += vUserReward.Amount
@@ -721,44 +722,44 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		Address:                           myUser.Address,
 		Status:                            status,
 		Amount:                            amount,
-		BalanceUsdt:                       fmt.Sprintf("%.4f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
-		BalanceDhb:                        fmt.Sprintf("%.4f", float64(userBalance.BalanceDhb)/float64(10000000000)),
+		BalanceUsdt:                       fmt.Sprintf("%.2f", float64(userBalance.BalanceUsdt)/float64(10000000000)),
+		BalanceDhb:                        fmt.Sprintf("%.2f", float64(userBalance.BalanceDhb)/float64(10000000000)),
 		InviteUrl:                         encodeString,
 		InviteUserAddress:                 inviteUserAddress,
 		RecommendNum:                      userInfo.HistoryRecommend,
 		RecommendTeamNum:                  recommendTeamNum,
-		Total:                             fmt.Sprintf("%.4f", float64(userRewardTotal)/float64(10000000000)),
-		WithdrawAmount:                    fmt.Sprintf("%.3f", float64(withdrawAmount)/float64(10000000000)),
-		RecommendTotal:                    fmt.Sprintf("%.4f", float64(recommendTotal)/float64(10000000000)),
-		LocationDailyRewardTotal:          fmt.Sprintf("%.4f", float64(locationDailyRewardTotal)/float64(10000000000)),
-		DailyBalanceRewardTotal:           fmt.Sprintf("%.4f", float64(dailyBalanceRewardTotal)/float64(10000000000)),
-		RecommendTeamTotal:                fmt.Sprintf("%.4f", float64(recommendTeamTotal)/float64(10000000000)),
-		RecommendAreaTotal:                fmt.Sprintf("%.4f", float64(recommendAreaTotal)/float64(10000000000)),
+		Total:                             fmt.Sprintf("%.2f", float64(userRewardTotal)/float64(10000000000)),
+		WithdrawAmount:                    fmt.Sprintf("%.2f", float64(withdrawAmount)/float64(10000000000)),
+		RecommendTotal:                    fmt.Sprintf("%.2f", float64(recommendTotal)/float64(10000000000)),
+		LocationDailyRewardTotal:          fmt.Sprintf("%.2f", float64(locationDailyRewardTotal)/float64(10000000000)),
+		DailyBalanceRewardTotal:           fmt.Sprintf("%.2f", float64(dailyBalanceRewardTotal)/float64(10000000000)),
+		RecommendTeamTotal:                fmt.Sprintf("%.2f", float64(recommendTeamTotal)/float64(10000000000)),
+		RecommendAreaTotal:                fmt.Sprintf("%.2f", float64(recommendAreaTotal)/float64(10000000000)),
 		Usdt:                              "0x55d398326f99059fF775485246999027B3197955",
 		Account:                           "0x67695931F24742cE4117a40C42Fa67769Cd93E16",
-		AmountB:                           fmt.Sprintf("%.4f", float64(myLastLocationCurrent)/float64(10000000000)),
-		AmountC:                           fmt.Sprintf("%.4f", float64(stopCoin)/float64(10000000000)),
+		AmountB:                           fmt.Sprintf("%.2f", float64(myLastLocationCurrent)/float64(10000000000)),
+		AmountC:                           fmt.Sprintf("%.2f", float64(stopCoin)/float64(10000000000)),
 		UserCount:                         userCount,
-		TotalDeposit:                      fmt.Sprintf("%.4f", float64(totalDepoist)/float64(10000000000)),
+		TotalDeposit:                      fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
 		LocationCount:                     locationCount,
-		FybPrice:                          fmt.Sprintf("%.4f", float64(fybPrice)/float64(1000)),
+		FybPrice:                          fmt.Sprintf("%.2f", float64(fybPrice)/float64(1000)),
 		Undo:                              myUser.Undo,
 		AreaName:                          areaName,
-		AreaAmount:                        fmt.Sprintf("%.4f", float64(areaAmount)/float64(100000)),
-		AreaMaxAmount:                     fmt.Sprintf("%.4f", float64(maxAreaAmount)/float64(100000)),
-		TotalAreaAmount:                   fmt.Sprintf("%.4f", float64(myUserArea.Amount)/float64(100000)),
-		AmountBalanceReward:               fmt.Sprintf("%.4f", float64(totalBalanceRewardAmount)/float64(10000000000)),
+		AreaAmount:                        fmt.Sprintf("%.2f", float64(areaAmount)/float64(100000)),
+		AreaMaxAmount:                     fmt.Sprintf("%.2f", float64(maxAreaAmount)/float64(100000)),
+		TotalAreaAmount:                   fmt.Sprintf("%.2f", float64(myUserArea.Amount)/float64(100000)),
+		AmountBalanceReward:               fmt.Sprintf("%.2f", float64(totalBalanceRewardAmount)/float64(10000000000)),
 		LocationList:                      myLocations,
 		RecommendAreaList:                 recommendAreaList,
 		RecommendList:                     recommendList,
 		RecommendTeamList:                 recommendTeamList,
 		LocationDailyRewardList:           locationDailyRewardList,
 		DailyBalanceRewardList:            dailyBalanceRewardList,
-		YesterdayRecommendTeamTotal:       fmt.Sprintf("%.4f", float64(yesterdayRecommendTeamTotal)/float64(10000000000)),
-		YesterdayRecommendAreaTotal:       fmt.Sprintf("%.4f", float64(yesterdayRecommendAreaTotal)/float64(10000000000)),
-		YesterdayDailyBalanceRewardTotal:  fmt.Sprintf("%.4f", float64(yesterdayDailyBalanceRewardTotal)/float64(10000000000)),
-		YesterdayLocationDailyRewardTotal: fmt.Sprintf("%.4f", float64(yesterdayLocationDailyRewardTotal)/float64(10000000000)),
-		YesterdayRecommendTotal:           fmt.Sprintf("%.4f", float64(yesterdayRecommendTotal)/float64(10000000000)),
+		YesterdayRecommendTeamTotal:       fmt.Sprintf("%.2f", float64(yesterdayRecommendTeamTotal)/float64(10000000000)),
+		YesterdayRecommendAreaTotal:       fmt.Sprintf("%.2f", float64(yesterdayRecommendAreaTotal)/float64(10000000000)),
+		YesterdayDailyBalanceRewardTotal:  fmt.Sprintf("%.2f", float64(yesterdayDailyBalanceRewardTotal)/float64(10000000000)),
+		YesterdayLocationDailyRewardTotal: fmt.Sprintf("%.2f", float64(yesterdayLocationDailyRewardTotal)/float64(10000000000)),
+		YesterdayRecommendTotal:           fmt.Sprintf("%.2f", float64(yesterdayRecommendTotal)/float64(10000000000)),
 	}, nil
 }
 
