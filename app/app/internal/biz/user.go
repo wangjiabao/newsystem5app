@@ -335,6 +335,7 @@ func (uuc *UserUseCase) UpdateUserRecommend(ctx context.Context, u *User, req *v
 
 	code := req.SendBody.Code // 查询推荐码 abf00dd52c08a9213f225827bc3fb100 md5 dhbmachinefirst
 	if "abf00dd52c08a9213f225827bc3fb100" != code {
+		fmt.Println(11112222)
 		decodeBytes, err = base64.StdEncoding.DecodeString(code)
 		code = string(decodeBytes)
 		if 1 >= len(code) {
