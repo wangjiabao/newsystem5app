@@ -512,8 +512,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 		if tmpCurrent > 0 {
 			status = "running"
-			amount = fmt.Sprintf("%.2f", float64(tmpCurrentMaxSubCurrent)/float64(10000000000))
 		}
+
+		amount = fmt.Sprintf("%.2f", float64(tmpCurrentMaxSubCurrent)/float64(10000000000))
 	}
 	locationCount = int64(len(locations))
 
