@@ -493,7 +493,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			if "running" == v.Status {
 				status = "yes"
 				tmpCurrent += v.Current
-				locationRunningAmount += v.CurrentMax / v.OutRate
+				locationRunningAmount += v.CurrentMax * 100 / v.OutRate
 				if v.CurrentMax >= v.Current {
 					tmpCurrentMaxSubCurrent += v.CurrentMax - v.Current
 				}
@@ -504,7 +504,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				Amount:         fmt.Sprintf("%.2f", float64(v.CurrentMax)/float64(v.OutRate)/float64(10000000000)),
 				LocationStatus: v.Status,
 				AmountMax:      fmt.Sprintf("%.2f", float64(v.CurrentMax)/float64(10000000000)),
-				OutRate:        v.OutRate,
+				OutRate:        fmt.Sprintf("%.2f", float64(v.OutRate)/float64(100)),
 			})
 		}
 

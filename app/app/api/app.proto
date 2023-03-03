@@ -251,7 +251,7 @@ message UserInfoReply {
 		string amount = 2;
 		string locationStatus = 3;
 		string amountMax = 4;
-		int64 outRate = 5;
+		string outRate = 5;
 	}
 
 	repeated List2 recommendTeamList = 53;

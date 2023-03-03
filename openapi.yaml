@@ -633,8 +633,7 @@ components:
                 amountMax:
                     type: string
                 outRate:
-                    type: integer
-                    format: int64
+                    type: string
         UserInfoReply_List2:
             type: object
             properties:
