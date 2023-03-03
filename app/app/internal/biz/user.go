@@ -323,70 +323,70 @@ func (uuc *UserUseCase) GetExistUserByAddressOrCreate(ctx context.Context, u *Us
 
 func (uuc *UserUseCase) UpdateUserRecommend(ctx context.Context, u *User, req *v1.RecommendUpdateRequest) (*v1.RecommendUpdateReply, error) {
 	var (
-		err                   error
-		userId                int64
-		recommendUser         *UserRecommend
-		userRecommend         *UserRecommend
-		locations             []*LocationNew
-		myRecommendUser       *User
-		myUserRecommendUserId int64
-		decodeBytes           []byte
+		err error
+		//userId                int64
+		//recommendUser         *UserRecommend
+		//userRecommend         *UserRecommend
+		//locations             []*LocationNew
+		myRecommendUser *User
+		//myUserRecommendUserId int64
+		//decodeBytes           []byte
 	)
 
 	code := req.SendBody.Code // 查询推荐码 abf00dd52c08a9213f225827bc3fb100 md5 dhbmachinefirst
 	if "abf00dd52c08a9213f225827bc3fb100" != code {
 		fmt.Println(11112222)
-		decodeBytes, err = base64.StdEncoding.DecodeString(code)
-		code = string(decodeBytes)
-		if 1 >= len(code) {
-			return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
-		}
-		if userId, err = strconv.ParseInt(code[1:], 10, 64); 0 >= userId || nil != err {
-			return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
-		}
-
-		// 现有推荐人信息，判断推荐人是否改变
-		userRecommend, err = uuc.urRepo.GetUserRecommendByUserId(ctx, u.ID)
-		if nil == userRecommend {
-			return nil, err
-		}
-		if "" != userRecommend.RecommendCode {
-			tmpRecommendUserIds := strings.Split(userRecommend.RecommendCode, "D")
-			if 2 <= len(tmpRecommendUserIds) {
-				myUserRecommendUserId, _ = strconv.ParseInt(tmpRecommendUserIds[len(tmpRecommendUserIds)-1], 10, 64) // 最后一位是直推人
-			}
-			myRecommendUser, err = uuc.repo.GetUserById(ctx, myUserRecommendUserId)
-			if nil != err {
-				return nil, err
-			}
-		}
-		if myRecommendUser.ID == userId {
-			return &v1.RecommendUpdateReply{InviteUserAddress: myRecommendUser.Address}, err
-		}
-
-		// 我的占位信息
-		locations, err = uuc.locationRepo.GetLocationsByUserId(ctx, u.ID)
-		if nil != locations && 0 < len(locations) {
-			return &v1.RecommendUpdateReply{InviteUserAddress: myRecommendUser.Address}, nil
-		}
-
-		// 查询推荐人的相关信息
-		recommendUser, err = uuc.urRepo.GetUserRecommendByUserId(ctx, userId)
-		if err != nil {
-			return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
-		}
-
-		// 推荐人信息
-		myRecommendUser, err = uuc.repo.GetUserById(ctx, userId)
-		if err != nil {
-			return nil, err
-		}
-
-		// 更新
-		_, err = uuc.urRepo.UpdateUserRecommend(ctx, u, recommendUser)
-		if err != nil {
-			return nil, err
-		}
+		//decodeBytes, err = base64.StdEncoding.DecodeString(code)
+		//code = string(decodeBytes)
+		//if 1 >= len(code) {
+		//	return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
+		//}
+		//if userId, err = strconv.ParseInt(code[1:], 10, 64); 0 >= userId || nil != err {
+		//	return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
+		//}
+		//
+		//// 现有推荐人信息，判断推荐人是否改变
+		//userRecommend, err = uuc.urRepo.GetUserRecommendByUserId(ctx, u.ID)
+		//if nil == userRecommend {
+		//	return nil, err
+		//}
+		//if "" != userRecommend.RecommendCode {
+		//	tmpRecommendUserIds := strings.Split(userRecommend.RecommendCode, "D")
+		//	if 2 <= len(tmpRecommendUserIds) {
+		//		myUserRecommendUserId, _ = strconv.ParseInt(tmpRecommendUserIds[len(tmpRecommendUserIds)-1], 10, 64) // 最后一位是直推人
+		//	}
+		//	myRecommendUser, err = uuc.repo.GetUserById(ctx, myUserRecommendUserId)
+		//	if nil != err {
+		//		return nil, err
+		//	}
+		//}
+		//if myRecommendUser.ID == userId {
+		//	return &v1.RecommendUpdateReply{InviteUserAddress: myRecommendUser.Address}, err
+		//}
+		//
+		//// 我的占位信息
+		//locations, err = uuc.locationRepo.GetLocationsByUserId(ctx, u.ID)
+		//if nil != locations && 0 < len(locations) {
+		//	return &v1.RecommendUpdateReply{InviteUserAddress: myRecommendUser.Address}, nil
+		//}
+		//
+		//// 查询推荐人的相关信息
+		//recommendUser, err = uuc.urRepo.GetUserRecommendByUserId(ctx, userId)
+		//if err != nil {
+		//	return nil, errors.New(500, "USER_ERROR", "无效的推荐码")
+		//}
+		//
+		//// 推荐人信息
+		//myRecommendUser, err = uuc.repo.GetUserById(ctx, userId)
+		//if err != nil {
+		//	return nil, err
+		//}
+		//
+		//// 更新
+		//_, err = uuc.urRepo.UpdateUserRecommend(ctx, u, recommendUser)
+		//if err != nil {
+		//	return nil, err
+		//}
 	}
 
 	return &v1.RecommendUpdateReply{InviteUserAddress: myRecommendUser.Address}, err
