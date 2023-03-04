@@ -444,7 +444,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	)
 
 	// 配置
-	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count", "coin_price", "time_again", "recommend_area_one", "recommend_area_two", "recommend_area_three", "recommend_area_four")
+	configs, err = uuc.configRepo.GetConfigByKeys(ctx, "user_count", "coin_price", "coin_rate", "time_again", "recommend_area_one", "recommend_area_two", "recommend_area_three", "recommend_area_four")
 	if nil != configs {
 		for _, vConfig := range configs {
 			if "user_count" == vConfig.KeyName {
