@@ -927,7 +927,7 @@ func (uuc *UserUseCase) Withdraw(ctx context.Context, req *v1.WithdrawRequest, u
 	amountFloat, _ := strconv.ParseFloat(req.SendBody.Amount, 10)
 	amountFloat *= 10000000000
 	amount, _ := strconv.ParseInt(strconv.FormatFloat(amountFloat, 'f', -1, 64), 10, 64)
-	if 100000000000 >= amount {
+	if 100000000000 > amount {
 		return &v1.WithdrawReply{
 			Status: "fail",
 		}, nil
