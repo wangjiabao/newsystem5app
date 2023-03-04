@@ -613,15 +613,16 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	var startDate time.Time
 	var endDate time.Time
 	if 16 <= now.Hour() {
-		startDate = now
-		endDate = now.AddDate(0, 0, 1)
-	} else {
 		startDate = now.AddDate(0, 0, -1)
-		endDate = now
+		endDate = startDate.AddDate(0, 0, 1)
+	} else {
+		startDate = now.AddDate(0, 0, -2)
+		endDate = startDate.AddDate(0, 0, 1)
 	}
 	yesterdayStart := time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 16, 0, 0, 0, time.UTC)
 	yesterdayEnd := time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 16, 0, 0, 0, time.UTC)
 
+	fmt.Println(now, yesterdayStart, yesterdayEnd)
 	userRewards, err = uuc.ubRepo.GetUserRewardByUserId(ctx, myUser.ID)
 	if nil != userRewards {
 		for _, vUserReward := range userRewards {
