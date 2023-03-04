@@ -425,6 +425,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		withdrawAmount           int64
 		locationCount            int64
 		fybPrice                 int64
+		fybRate                  int64
 		areaAmount               int64
 		maxAreaAmount            int64
 		recommendAreaOne         int64
@@ -451,6 +452,9 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			}
 			if "coin_price" == vConfig.KeyName {
 				fybPrice, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+			}
+			if "coin_rate" == vConfig.KeyName {
+				fybRate, _ = strconv.ParseInt(vConfig.Value, 10, 64)
 			}
 			if "time_again" == vConfig.KeyName {
 				timeAgain, _ = strconv.ParseInt(vConfig.Value, 10, 64)
@@ -821,6 +825,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		TotalDeposit:                      fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
 		LocationCount:                     locationCount,
 		FybPrice:                          fmt.Sprintf("%.2f", float64(fybPrice)/float64(1000)),
+		FybRate:                           fmt.Sprintf("%.2f", float64(fybRate)/float64(1000)),
 		Undo:                              myUser.Undo,
 		AreaName:                          areaName,
 		AreaAmount:                        fmt.Sprintf("%.2f", float64(areaAmount)/float64(100000)),
@@ -922,7 +927,7 @@ func (uuc *UserUseCase) Withdraw(ctx context.Context, req *v1.WithdrawRequest, u
 	amountFloat, _ := strconv.ParseFloat(req.SendBody.Amount, 10)
 	amountFloat *= 10000000000
 	amount, _ := strconv.ParseInt(strconv.FormatFloat(amountFloat, 'f', -1, 64), 10, 64)
-	if 0 >= amount {
+	if 100000000000 >= amount {
 		return &v1.WithdrawReply{
 			Status: "fail",
 		}, nil
@@ -1033,7 +1038,7 @@ func (uuc *UserUseCase) DeleteBalanceReward(ctx context.Context, req *v1.DeleteB
 	balanceRewards, err = uuc.ubRepo.GetBalanceRewardByUserId(ctx, user.ID)
 	if nil != err {
 		return &v1.DeleteBalanceRewardReply{
-			Status: "无余额宝数据",
+			Status: "fail",
 		}, nil
 	}
 
@@ -1044,7 +1049,7 @@ func (uuc *UserUseCase) DeleteBalanceReward(ctx context.Context, req *v1.DeleteB
 
 	if totalBalanceRewardAmount < amount {
 		return &v1.DeleteBalanceRewardReply{
-			Status: "余额宝金额不足",
+			Status: "fail",
 		}, nil
 	}
 
