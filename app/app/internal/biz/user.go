@@ -425,7 +425,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		withdrawAmount           int64
 		locationCount            int64
 		fybPrice                 int64
-		fybRate                  int64
+		fybRate                  string
 		areaAmount               int64
 		maxAreaAmount            int64
 		recommendAreaOne         int64
@@ -454,7 +454,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 				fybPrice, _ = strconv.ParseInt(vConfig.Value, 10, 64)
 			}
 			if "coin_rate" == vConfig.KeyName {
-				fybRate, _ = strconv.ParseInt(vConfig.Value, 10, 64)
+				fybRate = vConfig.Value
 			}
 			if "time_again" == vConfig.KeyName {
 				timeAgain, _ = strconv.ParseInt(vConfig.Value, 10, 64)
@@ -825,7 +825,7 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		TotalDeposit:                      fmt.Sprintf("%.2f", float64(totalDepoist)/float64(10000000000)),
 		LocationCount:                     locationCount,
 		FybPrice:                          fmt.Sprintf("%.2f", float64(fybPrice)/float64(1000)),
-		FybRate:                           fmt.Sprintf("%.2f", float64(fybRate)/float64(1000)),
+		FybRate:                           fybRate,
 		Undo:                              myUser.Undo,
 		AreaName:                          areaName,
 		AreaAmount:                        fmt.Sprintf("%.2f", float64(areaAmount)/float64(100000)),
