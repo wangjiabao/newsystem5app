@@ -431,10 +431,6 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 		recommendAreaTwo         int64
 		recommendAreaThree       int64
 		recommendAreaFour        int64
-		recommendAreaOneName     string
-		recommendAreaTwoName     string
-		recommendAreaThreeName   string
-		recommendAreaFourName    string
 		areaName                 string
 		timeAgain                int64
 		stopCoin                 int64
@@ -461,19 +457,15 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			}
 			if "recommend_area_one" == vConfig.KeyName {
 				recommendAreaOne, _ = strconv.ParseInt(vConfig.Value, 10, 64)
-				recommendAreaOneName = vConfig.Name
 			}
 			if "recommend_area_two" == vConfig.KeyName {
 				recommendAreaTwo, _ = strconv.ParseInt(vConfig.Value, 10, 64)
-				recommendAreaTwoName = vConfig.Name
 			}
 			if "recommend_area_three" == vConfig.KeyName {
 				recommendAreaThree, _ = strconv.ParseInt(vConfig.Value, 10, 64)
-				recommendAreaThreeName = vConfig.Name
 			}
 			if "recommend_area_four" == vConfig.KeyName {
 				recommendAreaFour, _ = strconv.ParseInt(vConfig.Value, 10, 64)
-				recommendAreaFourName = vConfig.Name
 			}
 		}
 	}
@@ -756,19 +748,19 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 
 			// 比较级别
 			if areaAmount >= recommendAreaOne {
-				areaName = recommendAreaOneName
+				areaName = "vip1"
 			}
 
 			if areaAmount >= recommendAreaTwo {
-				areaName = recommendAreaTwoName
+				areaName = "vip2"
 			}
 
 			if areaAmount >= recommendAreaThree {
-				areaName = recommendAreaThreeName
+				areaName = "vip3"
 			}
 
 			if areaAmount >= recommendAreaFour {
-				areaName = recommendAreaFourName
+				areaName = "vip4"
 			}
 		}
 
@@ -778,16 +770,16 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 	myUserArea, err = uuc.urRepo.GetUserArea(ctx, user.ID)
 	if nil != myUserArea && 0 < myUserArea.Level {
 		if myUserArea.Level >= 1 {
-			areaName = recommendAreaOneName
+			areaName = "vip1"
 		}
 		if myUserArea.Level >= 2 {
-			areaName = recommendAreaTwoName
+			areaName = "vip2"
 		}
 		if myUserArea.Level >= 3 {
-			areaName = recommendAreaThreeName
+			areaName = "vip3"
 		}
 		if myUserArea.Level >= 4 {
-			areaName = recommendAreaFourName
+			areaName = "vip4"
 		}
 	}
 

@@ -1689,7 +1689,7 @@ func (uc *UserCurrentMonthRecommendRepo) GetUserCurrentMonthRecommendGroupByUser
 func (ub *UserBalanceRepo) GetUserRewardByUserId(ctx context.Context, userId int64) ([]*biz.Reward, error) {
 	var rewards []*Reward
 	res := make([]*biz.Reward, 0)
-	if err := ub.data.db.Where("user_id", userId).Table("reward").Find(&rewards).Error; err != nil {
+	if err := ub.data.db.Where("user_id", userId).Table("reward").Order("id desc").Find(&rewards).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return res, errors.NotFound("REWARD_NOT_FOUND", "reward not found")
 		}
