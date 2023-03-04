@@ -752,19 +752,19 @@ func (uuc *UserUseCase) UserInfo(ctx context.Context, user *User) (*v1.UserInfoR
 			}
 
 			// 比较级别
-			if areaAmount >= recommendAreaOne {
+			if areaAmount >= recommendAreaOne*100000 {
 				areaName = "vip1"
 			}
 
-			if areaAmount >= recommendAreaTwo {
+			if areaAmount >= recommendAreaTwo*100000 {
 				areaName = "vip2"
 			}
 
-			if areaAmount >= recommendAreaThree {
+			if areaAmount >= recommendAreaThree*100000 {
 				areaName = "vip3"
 			}
 
-			if areaAmount >= recommendAreaFour {
+			if areaAmount >= recommendAreaFour*100000 {
 				areaName = "vip4"
 			}
 		}
